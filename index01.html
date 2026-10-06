@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Hub | Premium Photo Showcase & Gallery</title>
+  
+  <!-- Tailwind CSS via Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#a78bfa',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3s ease-in-out infinite',
+            'spin-slow': 'spin 3s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track, #030712); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb, #1f2937); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+    :root {
+      --bg-main: #030712;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+    }
+
+    html.light {
+      --bg-main: #f3f4f6;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border-color: rgba(0, 0, 0, 0.08);
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --scrollbar-track: #e5e7eb;
+      --scrollbar-thumb: #9ca3af;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+    }
+
+    .uniform-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) { .uniform-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .uniform-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1280px) { .uniform-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+    .gallery-item {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.4);
+    }
+
+    .img-container {
+      width: 100%;
+      height: 220px;
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gallery-item:hover .gallery-img {
+      transform: scale(1.05);
+    }
+
+    .neon-glow {
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- VIEW 0: WELCOME / LANDING PAGE -->
+  <section id="viewWelcome" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="glass-card rounded-3xl p-8 sm:p-12 max-w-lg w-full text-center space-y-6 relative z-10 animate-float">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-400 flex items-center justify-center text-white text-3xl font-black mx-auto neon-glow">P</div>
+      <div class="space-y-2">
+        <h1 class="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-purple-200 to-brand-400 bg-clip-text text-transparent">Photo Hub</h1>
+        <p class="text-sm font-medium opacity-80">✨ හොඳම දේවල් අපෙන් - අලුත්ම එකතුව රසවිඳින්න සූදානම්ද?</p>
+      </div>
+      
+      <button onclick="enterSite()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-brand-600 to-purple-600 text-white font-bold hover:from-brand-500 hover:to-purple-500 transition shadow-lg shadow-brand-600/30 text-base flex items-center justify-center gap-2 group">
+        <span>Enter Site</span>
+        <svg class="w-5 h-5 transition-transform group-hover:translate-x-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+      </button>
+      
+      <div class="pt-2 text-xs opacity-70 flex items-center justify-center gap-1.5 font-medium">
+        <span>👁️ Total Site Views:</span> <span id="welcomeViewsCount" class="font-bold text-brand-400">...</span>
+      </div>
+
+      <div class="pt-4 border-t border-[var(--border-color)] flex items-center justify-center gap-4">
+        <a href="https://t.me/Hodamaewa" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-sky-400 hover:text-sky-300 transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.12.098.153.228.166.331.011.095.025.314.011.485z"/></svg>
+          Telegram Group
+        </a>
+        <button onclick="openGuideModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 transition">
+          <span>📖</span> Guide / Help
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN APP WRAPPER -->
+  <div id="mainAppWrapper" class="hidden flex flex-col min-h-screen">
+    
+    <!-- TOP NAVIGATION -->
+    <header class="sticky top-0 z-40 glass-card border-b border-[var(--border-color)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+        <a href="#gallery" onclick="navigateTo('gallery')" class="text-xl font-black flex items-center gap-2.5 group">
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-400 flex items-center justify-center text-white transition-transform group-hover:scale-110 shadow-md">P</span>
+          <span class="bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">Photo Hub</span>
+        </a>
+        
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="hidden md:flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-xl glass-card font-semibold opacity-90">
+            👁️ Site Views: <span id="headerViewsCount" class="font-bold text-brand-400">...</span>
+          </div>
+
+          <button onclick="openGuideModal()" class="px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl glass-card hover:bg-white/10 transition flex items-center gap-1.5" title="Guide">
+            <span>📖</span> <span class="hidden sm:inline">Guide</span>
+          </button>
+
+          <button onclick="toggleTheme()" class="p-2.5 rounded-xl glass-card text-slate-200 hover:scale-105 transition" title="Toggle Mode">
+            <svg class="w-5 h-5 text-amber-400 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </button>
+          
+          <button onclick="navigateTo('gallery')" class="px-4 py-2 text-sm font-semibold rounded-xl glass-card hover:bg-white/10 transition hidden sm:inline-block">Gallery</button>
+          
+          <div id="authNavContainer">
+            <button onclick="navigateTo('auth')" class="px-4 py-2 text-sm font-semibold rounded-xl bg-brand-600 text-white hover:bg-brand-500 transition flex items-center gap-1.5 shadow-md">
+              <span>✍️</span> Create Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- VIEW 1: PUBLIC GALLERY -->
+      <section id="viewGallery" class="space-y-8">
+        
+        <!-- SLIDESHOW CONTAINER -->
+        <div id="slideshowContainer" class="glass-card rounded-3xl overflow-hidden relative shadow-2xl hidden">
+          <div id="slideshowWrapper" class="relative h-80 sm:h-[420px] w-full overflow-hidden flex items-center justify-center bg-black/60"></div>
+          <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white p-3 rounded-full backdrop-blur-md transition z-30">&larr;</button>
+          <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white p-3 rounded-full backdrop-blur-md transition z-30">&rarr;</button>
+          <div id="slideshowDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2.5 z-30"></div>
+        </div>
+
+        <!-- HERO BANNER & FILTERS -->
+        <div class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Explore Photo Hub</h1>
+          <p class="text-base mt-2 font-medium opacity-85">හොඳම දේවල් අපෙන් - අලුත්ම එකතුව මෙන්න</p>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-[var(--border-color)] pt-6">
+            <div class="relative w-full sm:w-96">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-4 opacity-50">🔍</span>
+              <input type="text" id="searchInput" oninput="filterPhotos()" placeholder="Search photos by title or description..." class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition">
+            </div>
+            
+            <div id="categoryFilters" class="flex flex-wrap gap-2 w-full sm:w-auto">
+              <button onclick="setFilter('All')" class="filter-btn px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white transition shadow-md">All Photos</button>
+              <button onclick="setFilter('Trending')" class="filter-btn px-5 py-2.5 rounded-xl text-xs font-bold glass-card opacity-80 hover:opacity-100 transition">🔥 Trending</button>
+            </div>
+          </div>
+          <div class="mt-4 text-xs font-semibold opacity-70">Total matching photos: <span id="galleryPhotoCount" class="font-bold">0</span></div>
+        </div>
+
+        <!-- GALLERY GRID & LOADING SPINNER -->
+        <div id="galleryLoadingSpinner" class="py-24 text-center space-y-4">
+          <div class="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p class="text-sm font-bold opacity-75">පෝස්ට් සහ පින්තූර ලෝඩ් වෙමින් පවතී, මොහොතක් රැඳී සිටින්න...</p>
+        </div>
+        
+        <div id="galleryGrid" class="uniform-grid"></div>
+        <div id="paginationContainer" class="flex justify-center items-center gap-2 pt-6"></div>
+      </section>
+
+      <!-- VIEW 2: AUTH PAGE -->
+      <section id="viewAuth" class="hidden max-w-md mx-auto mt-12">
+        <div class="glass-card rounded-3xl p-8 space-y-6">
+          <div class="text-center space-y-2">
+            <div class="w-16 h-16 rounded-2xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-2xl font-bold mx-auto">✍️</div>
+            <h1 id="authTitleText" class="text-2xl font-black">Create Account</h1>
+            <p id="authDescText" class="text-xs opacity-70">Set up your account details.</p>
+          </div>
+
+          <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+            <input type="text" id="authUsername" required placeholder="Username" class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition">
+            <input type="password" id="authPassword" required placeholder="Password" class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition">
+            
+            <button type="submit" id="authSubmitBtn" class="w-full py-3.5 rounded-2xl bg-brand-600 text-sm font-bold text-white hover:bg-brand-500 transition shadow-lg shadow-brand-600/30">Create Account</button>
+          </form>
+
+          <div class="text-center pt-2 space-y-2">
+            <button onclick="toggleAuthMode()" id="authToggleSwitchBtn" class="text-xs font-semibold text-brand-400 hover:underline block mx-auto">Already have an account? Login here</button>
+            <button onclick="navigateTo('gallery')" class="text-xs font-semibold opacity-70 hover:opacity-100 underline block mx-auto">← Back to Gallery</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: ADMIN PANEL -->
+      <section id="viewAdmin" class="hidden space-y-8">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <h1 class="text-3xl font-black">Admin Dashboard</h1>
+            <p class="text-xs opacity-70 mt-1">Welcome back, Admin! Manage photos securely.</p>
+          </div>
+          <button onclick="handleLogout()" class="px-5 py-2.5 rounded-xl bg-red-950/60 text-red-400 hover:bg-red-900/60 text-sm font-semibold transition">Logout</button>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-8">
+          <h2 id="formHeading" class="text-xl font-bold mb-6">Publish New Photo</h2>
+          <form id="uploadPhotoForm" onsubmit="handlePhotoFormSubmit(event)" class="space-y-5">
+            <input type="hidden" id="editPhotoId" value="">
+            <div>
+              <label class="block text-xs font-bold mb-2 uppercase tracking-wide">Select Image from PC <span id="imageOptionalLabel" class="opacity-50 hidden font-normal">(Leave blank to keep existing)</span></label>
+              <input type="file" id="uploadFileInput" accept="image/*" class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-600 file:text-white file:cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-2 uppercase tracking-wide">Title</label>
+              <input type="text" id="uploadTitle" required placeholder="Photo Title" class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-2 uppercase tracking-wide">Description</label>
+              <textarea id="uploadDescription" rows="3" required placeholder="Write a brief description..." class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-2 uppercase tracking-wide">Video Link URL (Optional)</label>
+              <input type="url" id="uploadLinkUrl" placeholder="https://youtube.com/..." class="w-full bg-black/10 dark:bg-white/5 border border-[var(--border-color)] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 transition">
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+              <button type="submit" id="uploadBtn" class="px-6 py-3 rounded-2xl bg-brand-600 text-sm font-bold text-white hover:bg-brand-500 transition shadow-lg shadow-brand-600/30">Publish Photo</button>
+              <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden px-6 py-3 rounded-2xl glass-card text-sm font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-8 overflow-x-auto">
+          <h2 class="text-xl font-bold mb-6">Manage Uploaded Photos</h2>
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-[var(--border-color)] opacity-60 text-xs uppercase tracking-wider">
+                <th class="py-3 px-4">Preview</th>
+                <th class="py-3 px-4">Title</th>
+                <th class="py-3 px-4">Views</th>
+                <th class="py-3 px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- ACTIVITY HISTORY -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 overflow-x-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">📋 Admin Activity History</h2>
+            <button onclick="clearActivityHistory()" class="px-4 py-1.5 bg-red-950/60 hover:bg-red-900/60 text-red-400 rounded-xl text-xs font-semibold transition">Clear History</button>
+          </div>
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-[var(--border-color)] opacity-60 text-xs uppercase tracking-wider">
+                <th class="py-3 px-4">Action</th>
+                <th class="py-3 px-4">Post Title</th>
+                <th class="py-3 px-4">Date & Time</th>
+              </tr>
+            </thead>
+            <tbody id="activityTableBody">
+              <tr><td colspan="3" class="py-6 text-center opacity-60">No activity recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- FLOATING TELEGRAM -->
+    <a href="https://t.me/Hodamaewa" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-50 bg-sky-500 hover:bg-sky-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 neon-glow">
+      <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.12.098.153.228.166.331.011.095.025.314.011.485z"/></svg>
+    </a>
+  </div>
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl font-bold bg-slate-800/80 w-12 h-12 rounded-full flex items-center justify-center hover:bg-slate-700 transition">&times;</button>
+    <div class="max-w-4xl w-full flex flex-col items-center space-y-4">
+      <img id="lightboxImg" src="" alt="" class="max-h-[65vh] max-w-full object-contain rounded-2xl border border-slate-800 shadow-2xl">
+      <div class="text-center space-y-2">
+        <h3 id="lightboxTitle" class="text-xl font-bold text-white"></h3>
+        <p id="lightboxDesc" class="text-sm text-slate-300 max-w-xl"></p>
+        <div id="lightboxViews" class="text-xs font-semibold text-brand-400">👁 Views: 0</div>
+        <div class="flex items-center justify-center gap-3 pt-2">
+          <a id="lightboxDownloadBtn" href="" download="photo.jpg" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition">📥 Download</a>
+          <button onclick="copyLightboxLink()" class="px-5 py-2.5 glass-card text-white rounded-xl text-xs font-bold flex items-center gap-2 transition">🔗 Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDE / HELP MODAL -->
+  <div id="guideModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-lg w-full relative space-y-6 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeGuideModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-xl font-bold">📖</div>
+        <div>
+          <h2 class="text-xl font-black">User Guide & Help</h2>
+          <p class="text-xs opacity-70">Photo Hub භාවිත කරන හැටි මෙන්න</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-sm">
+        <div class="p-4 rounded-2xl bg-white/5 border border-[var(--border-color)] space-y-1">
+          <h4 class="font-bold flex items-center gap-2 text-brand-400"><span>🖼️</span> Viewing Photos</h4>
+          <p class="text-xs opacity-80 leading-relaxed">පින්තූරයක් උඩ ක්ලික් කිරීම මඟින් එය Fullscreen ආකාරයෙන් විශාල කර බලාගත හැක.</p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 border border-[var(--border-color)] space-y-1">
+          <h4 class="font-bold flex items-center gap-2 text-brand-400"><span>📥</span> Downloading</h4>
+          <p class="text-xs opacity-80 leading-relaxed">පින්තූර විවෘත වූ පසු ඇති Download බටන් එක භාවිතයෙන් පහසුවෙන්ම ඩවුන්ලෝඩ් කරගත හැක.</p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 border border-[var(--border-color)] space-y-1">
+          <h4 class="font-bold flex items-center gap-2 text-brand-400"><span>🎬</span> Video Links</h4>
+          <p class="text-xs opacity-80 leading-relaxed">Watch Video බොත්තම ක්ලික් කළ විට ඔබ ලබා දී ඇති නියමිත වීඩියෝ ලින්ක් එකට කෙලින්ම යනු ඇත.</p>
+        </div>
+      </div>
+
+      <button onclick="closeGuideModal()" class="w-full py-3 rounded-2xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-500 transition shadow-lg shadow-brand-600/30">Got it, Thanks!</button>
+    </div>
+  </div>
+
+  <!-- SINHALA POPUP NOTICE MODAL -->
+  <div id="noticePopupModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-md w-full relative space-y-5 shadow-2xl border border-[var(--border-color)] animate-float text-center">
+      
+      <button onclick="closeNoticePopup()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition">&times;</button>
+      
+      <div class="w-16 h-16 rounded-2xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-2xl font-bold mx-auto neon-glow">
+        ✨
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-xl font-black bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">විශේෂ දැනුම්දීමයි</h3>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+          ඔබට අවශ්‍ය videos photos විනාඩි කිහිපයකින් ඔබට පෙනේවි. මොහොතක් රැඳී සිටින්න.
+        </p>
+      </div>
+
+      <button onclick="closeNoticePopup()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-purple-600 text-white font-bold text-xs sm:text-sm hover:from-brand-500 hover:to-purple-500 transition shadow-lg shadow-brand-600/30">
+        තේරුම් ගත්තා (Got it)
+      </button>
+
+    </div>
+  </div>
+
+  <!-- FIREBASE AND APP LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvWzQUIxp9TyTkz_Su0m4x8ViDea5gzlg",
+      authDomain: "potohub-47013.firebaseapp.com",
+      projectId: "potohub-47013",
+      storageBucket: "potohub-47013.appspot.com",
+      messagingSenderId: "1044123896393",
+      appId: "1:1044123896393:web:0d1d116b3ef14951f2cd98",
+      measurementId: "G-RH04PZVMWY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let photos = [];
+    let filteredPhotos = [];
+    let currentFilter = 'All';
+    let currentPage = 1;
+    const itemsPerPage = 8;
+    let currentLightboxUrl = '';
+    let currentSlideIndex = 0;
+    let slideshowInterval = null;
+
+    let isSignupMode = true;
+
+    const adUrl = "https://omg10.com/4/11883914";
+    let globalAdOpened = false;
+
+    document.addEventListener('click', function(e) {
+      if (!globalAdOpened && !document.getElementById('mainAppWrapper').classList.contains('hidden')) {
+        window.open(adUrl, '_blank');
+        globalAdOpened = true;
+        setTimeout(() => { globalAdOpened = false; }, 60000);
+      }
+    });
+
+    const ADMIN_USERNAME = "chathumal";
+    const ADMIN_PASSWORD = "aaaa1234";
+
+    function checkAdminSession() {
+      return sessionStorage.getItem("isAdminLoggedIn") === "true";
+    }
+
+    window.openGuideModal = function() {
+      document.getElementById('guideModal').classList.remove('hidden');
+    }
+
+    window.closeGuideModal = function() {
+      document.getElementById('guideModal').classList.add('hidden');
+    }
+
+    window.closeNoticePopup = function() {
+      document.getElementById('noticePopupModal').classList.add('hidden');
+    }
+
+    window.showToast = function(message, type = 'success') {
+      const existingToast = document.getElementById('customToast');
+      if (existingToast) existingToast.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'customToast';
+      const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
+      toast.className = `fixed bottom-6 left-6 z-50 px-5 py-3.5 rounded-2xl text-white text-xs sm:text-sm font-bold shadow-2xl backdrop-blur-md flex items-center gap-2.5 transition-all transform translate-y-10 opacity-0 ${bgColor}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✨' : '⚠'}</span><span>${message}</span>`;
+      
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    window.toggleTheme = function() {
+      const htmlEl = document.documentElement;
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlEl.classList.remove('light');
+        htmlEl.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    };
+
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+
+    async function fetchInitialViews() {
+      try {
+        const statsRef = doc(db, "site_stats", "counter");
+        const docSnap = await getDoc(statsRef);
+        if (docSnap.exists()) {
+          const count = docSnap.data().totalViews || 0;
+          document.getElementById('welcomeViewsCount').textContent = count.toLocaleString();
+          document.getElementById('headerViewsCount').textContent = count.toLocaleString();
+        } else {
+          document.getElementById('welcomeViewsCount').textContent = '0';
+          document.getElementById('headerViewsCount').textContent = '0';
+        }
+      } catch (e) {
+        console.error("Error fetching views:", e);
+      }
+    }
+    fetchInitialViews();
+
+    window.enterSite = async function() {
+      window.open(adUrl, '_blank');
+
+      try {
+        const statsRef = doc(db, "site_stats", "counter");
+        const docSnap = await getDoc(statsRef);
+        if (!docSnap.exists()) {
+          await setDoc(statsRef, { totalViews: 1 });
+        } else {
+          await updateDoc(statsRef, { totalViews: increment(1) });
+        }
+        const updatedSnap = await getDoc(statsRef);
+        if (updatedSnap.exists()) {
+          const count = updatedSnap.data().totalViews;
+          document.getElementById('welcomeViewsCount').textContent = count.toLocaleString();
+          document.getElementById('headerViewsCount').textContent = count.toLocaleString();
+        }
+      } catch (err) {
+        console.error("Failed to update view count:", err);
+      }
+
+      document.getElementById('viewWelcome').classList.add('hidden');
+      document.getElementById('mainAppWrapper').classList.remove('hidden');
+      loadPhotosFromFirebase();
+      updateAuthNavUI();
+      showToast('Welcome to Photo Hub!');
+
+      setTimeout(() => {
+        document.getElementById('noticePopupModal').classList.remove('hidden');
+      }, 500);
+    }
+
+    function updateAuthNavUI() {
+      const container = document.getElementById('authNavContainer');
+      if (!container) return;
+
+      if (checkAdminSession()) {
+        container.innerHTML = `
+          <button onclick="navigateTo('admin')" class="px-4 py-2 text-sm font-semibold rounded-xl bg-brand-600 text-white hover:bg-brand-500 transition flex items-center gap-1.5 shadow-md">
+            <span>⚙️</span> Dashboard
+          </button>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="navigateTo('auth')" class="px-4 py-2 text-sm font-semibold rounded-xl bg-brand-600 text-white hover:bg-brand-500 transition flex items-center gap-1.5 shadow-md">
+            <span>✍️</span> Create Account
+          </button>
+        `;
+      }
+    }
+
+    window.navigateTo = function(view) {
+      document.getElementById('viewGallery').classList.add('hidden');
+      document.getElementById('viewAuth').classList.add('hidden');
+      document.getElementById('viewAdmin').classList.add('hidden');
+
+      if (view === 'gallery') {
+        document.getElementById('viewGallery').classList.remove('hidden');
+      } else if (view === 'auth') {
+        document.getElementById('viewAuth').classList.remove('hidden');
+      } else if (view === 'admin') {
+        if (!checkAdminSession()) {
+          showToast('Please login as admin first!', 'error');
+          document.getElementById('viewAuth').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('viewAdmin').classList.remove('hidden');
+        renderAdminTable();
+        renderActivityHistory();
+      }
+    }
+
+    window.toggleAuthMode = function() {
+      isSignupMode = !isSignupMode;
+      const title = document.getElementById('authTitleText');
+      const desc = document.getElementById('authDescText');
+      const btn = document.getElementById('authSubmitBtn');
+      const toggleBtn = document.getElementById('authToggleSwitchBtn');
+
+      if (isSignupMode) {
+        title.textContent = "Create Account";
+        desc.textContent = "Set up your account details.";
+        btn.textContent = "Create Account";
+        toggleBtn.textContent = "Already have an account? Login here";
+      } else {
+        title.textContent = "Admin Login";
+        desc.textContent = "Enter admin credentials to manage site.";
+        btn.textContent = "Login";
+        toggleBtn.textContent = "Need to create account? Sign up here";
+      }
+    }
+
+    window.handleAuthSubmit = function(e) {
+      e.preventDefault();
+      const u = document.getElementById('authUsername').value.trim();
+      const p = document.getElementById('authPassword').value.trim();
+
+      if (isSignupMode) {
+        showToast('Account created successfully! Please login.');
+        toggleAuthMode();
+        document.getElementById('authUsername').value = '';
+        document.getElementById('authPassword').value = '';
+      } else {
+        if (u === ADMIN_USERNAME && p === ADMIN_PASSWORD) {
+          sessionStorage.setItem("isAdminLoggedIn", "true");
+          showToast('Login successful!');
+          updateAuthNavUI();
+          navigateTo('admin');
+        } else {
+          showToast('Invalid admin username or password!', 'error');
+        }
+      }
+    }
+
+    window.handleLogout = function() {
+      sessionStorage.removeItem("isAdminLoggedIn");
+      updateAuthNavUI();
+      navigateTo('gallery');
+      showToast('Logged out successfully.');
+    }
+
+    // --- FIREBASE PHOTO FUNCTIONS & TELEGRAM BEACON NOTIFICATION ---
+    async function loadPhotosFromFirebase() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "photos"));
+        photos = [];
+        querySnapshot.forEach((docSnap) => {
+          photos.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        photos.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        
+        document.getElementById('galleryLoadingSpinner').classList.add('hidden');
+        filterPhotos();
+        renderSlideshow();
+      } catch (e) {
+        console.error("Error loading photos:", e);
+        document.getElementById('galleryLoadingSpinner').innerHTML = '<p class="text-red-400 font-bold">Failed to load photos. Please check connection.</p>';
+      }
+    }
+
+    window.setFilter = function(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = "filter-btn px-5 py-2.5 rounded-xl text-xs font-bold glass-card opacity-80 hover:opacity-100 transition";
+      });
+      event.target.className = "filter-btn px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white transition shadow-md";
+      currentPage = 1;
+      filterPhotos();
+    }
+
+    window.filterPhotos = function() {
+      const searchTxt = document.getElementById('searchInput').value.toLowerCase();
+      filteredPhotos = photos.filter(item => {
+        const matchesSearch = (item.title || '').toLowerCase().includes(searchTxt) || (item.description || '').toLowerCase().includes(searchTxt);
+        if (currentFilter === 'Trending') {
+          return matchesSearch && (item.views || 0) >= 5;
+        }
+        return matchesSearch;
+      });
+
+      document.getElementById('galleryPhotoCount').textContent = filteredPhotos.length;
+      renderGalleryGrid();
+    }
+
+    function renderGalleryGrid() {
+      const grid = document.getElementById('galleryGrid');
+      const pagination = document.getElementById('paginationContainer');
+      grid.innerHTML = '';
+      pagination.innerHTML = '';
+
+      if (filteredPhotos.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-60"><p class="text-base font-semibold">No photos found matching your criteria.</p></div>`;
+        return;
+      }
+
+      const totalPages = Math.ceil(filteredPhotos.length / itemsPerPage);
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const paginatedItems = filteredPhotos.slice(start, start + itemsPerPage);
+
+      paginatedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'gallery-item glass-card rounded-2xl overflow-hidden flex flex-col justify-between';
+        
+        const videoBtnHtml = item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md"><span>🎬</span> Watch Video</a>` : '';
+
+        card.innerHTML = `
+          <div class="img-container cursor-pointer" onclick="openLightbox('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}', '${item.description.replace(/'/g, "\\'")}', '${item.id}', ${item.views || 0})">
+            <img src="${item.imageUrl}" alt="${item.title}" class="gallery-img" loading="lazy">
+          </div>
+          <div class="p-5 flex flex-col flex-grow justify-between space-y-3">
+            <div class="space-y-1">
+              <h3 class="font-bold text-base line-clamp-1">${item.title}</h3>
+              <p class="text-xs opacity-75 line-clamp-2">${item.description}</p>
+            </div>
+            <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs">
+              <span class="opacity-70 font-semibold">👁️ ${item.views || 0} views</span>
+              <div class="flex items-center gap-2">
+                ${videoBtnHtml}
+                <button onclick="openLightbox('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}', '${item.description.replace(/'/g, "\\'")}', '${item.id}', ${item.views || 0})" class="px-3.5 py-2 glass-card hover:bg-white/10 text-white rounded-xl font-bold transition">View</button>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement('button');
+          btn.className = `px-4 py-2 rounded-xl text-xs font-bold transition ${i === currentPage ? 'bg-brand-600 text-white shadow-md' : 'glass-card hover:bg-white/10'}`;
+          btn.textContent = i;
+          btn.onclick = () => { currentPage = i; renderGalleryGrid(); window.scrollTo({ top: 300, behavior: 'smooth' }); };
+          pagination.appendChild(btn);
+        }
+      }
+    }
+
+    function renderSlideshow() {
+      const container = document.getElementById('slideshowContainer');
+      const wrapper = document.getElementById('slideshowWrapper');
+      const dotsContainer = document.getElementById('slideshowDots');
+      wrapper.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      const topSlides = photos.slice(0, 5);
+      if (topSlides.length === 0) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+
+      topSlides.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = `absolute inset-0 transition-opacity duration-1000 flex items-center justify-center p-4 sm:p-8 ${index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+        slide.innerHTML = `
+          <!-- Background Blur Image -->
+          <img src="${item.imageUrl}" class="absolute inset-0 w-full h-full object-cover filter blur-xl opacity-30 pointer-events-none">
+          
+          <!-- Content layout: Main image on left/center, text info alongside -->
+          <div class="relative z-10 max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 h-full">
+            <div class="w-full sm:w-1/2 h-48 sm:h-64 rounded-2xl overflow-hidden glass-card shadow-2xl flex items-center justify-center bg-black/40">
+              <img src="${item.imageUrl}" class="w-full h-full object-contain">
+            </div>
+            <div class="w-full sm:w-1/2 text-center sm:text-left space-y-3">
+              <span class="px-3 py-1 bg-brand-600 text-white text-xs font-bold rounded-full shadow-md inline-block">🔥 Featured Showcase</span>
+              <h2 class="text-2xl sm:text-3xl font-black text-white line-clamp-1">${item.title}</h2>
+              <p class="text-xs sm:text-sm text-slate-200 line-clamp-2">${item.description}</p>
+            </div>
+          </div>
+        `;
+        wrapper.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.className = `w-3 h-3 rounded-full transition ${index === 0 ? 'bg-brand-500 w-8' : 'bg-white/40 hover:bg-white/70'}`;
+        dot.onclick = () => { currentSlideIndex = index; updateSlideshow(); };
+        dotsContainer.appendChild(dot);
+      });
+
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      slideshowInterval = setInterval(() => {
+        currentSlideIndex = (currentSlideIndex + 1) % topSlides.length;
+        updateSlideshow();
+      }, 5000);
+    }
+
+    function updateSlideshow() {
+      const slides = document.querySelectorAll('#slideshowWrapper > div');
+      const dots = document.querySelectorAll('#slideshowDots > button');
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlideIndex) {
+          slide.classList.remove('opacity-0', 'z-0');
+          slide.classList.add('opacity-100', 'z-10');
+        } else {
+          slide.classList.remove('opacity-100', 'z-10');
+          slide.classList.add('opacity-0', 'z-0');
+        }
+      });
+      dots.forEach((dot, idx) => {
+        if (idx === currentSlideIndex) {
+          dot.className = "w-8 h-3 rounded-full bg-brand-500 transition";
+        } else {
+          dot.className = "w-3 h-3 rounded-full bg-white/40 hover:bg-white/70 transition";
+        }
+      });
+    }
+
+    window.nextSlide = function() {
+      const topSlides = photos.slice(0, 5);
+      if (topSlides.length === 0) return;
+      currentSlideIndex = (currentSlideIndex + 1) % topSlides.length;
+      updateSlideshow();
+    }
+
+    window.prevSlide = function() {
+      const topSlides = photos.slice(0, 5);
+      if (topSlides.length === 0) return;
+      currentSlideIndex = (currentSlideIndex - 1 + topSlides.length) % topSlides.length;
+      updateSlideshow();
+    }
+
+    window.openLightbox = async function(imageUrl, title, description, docId, currentViews) {
+      currentLightboxUrl = imageUrl;
+      document.getElementById('lightboxImg').src = imageUrl;
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightboxDesc').textContent = description;
+      document.getElementById('lightboxDownloadBtn').href = imageUrl;
+      document.getElementById('lightboxViews').textContent = `👁️ Views: ${(currentViews + 1).toLocaleString()}`;
+      document.getElementById('lightboxModal').classList.remove('hidden');
+
+      try {
+        const docRef = doc(db, "photos", docId);
+        await updateDoc(docRef, { views: increment(1) });
+        const targetPhoto = photos.find(p => p.id === docId);
+        if (targetPhoto) targetPhoto.views = (targetPhoto.views || 0) + 1;
+      } catch (e) {
+        console.error("Error incrementing view count:", e);
+      }
+    }
+
+    window.closeLightbox = function() {
+      document.getElementById('lightboxModal').classList.add('hidden');
+      filterPhotos();
+    }
+
+    window.copyLightboxLink = function() {
+      navigator.clipboard.writeText(currentLightboxUrl);
+      showToast('Image link copied to clipboard!');
+    }
+
+    // --- ADMIN PANEL FUNCTIONS & RELIABLE TELEGRAM BEACON NOTIFICATION ---
+    window.handlePhotoFormSubmit = async function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('uploadFileInput');
+      const title = document.getElementById('uploadTitle').value.trim();
+      const description = document.getElementById('uploadDescription').value.trim();
+      const linkUrl = document.getElementById('uploadLinkUrl').value.trim();
+      const editId = document.getElementById('editPhotoId').value;
+      const uploadBtn = document.getElementById('uploadBtn');
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Processing...";
+
+      try {
+        let imageUrl = "";
+
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          imageUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+          });
+        }
+
+        if (editId) {
+          const existing = photos.find(p => p.id === editId);
+          if (!imageUrl && existing) imageUrl = existing.imageUrl;
+
+          const docRef = doc(db, "photos", editId);
+          await updateDoc(docRef, { title, description, linkUrl, imageUrl });
+          showToast('Photo updated successfully!');
+          logAdminActivity('Updated Post', title);
+          resetForm();
+        } else {
+          if (!imageUrl) {
+            showToast('Please select an image file!', 'error');
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = "Publish Photo";
+            return;
+          }
+
+          const newDoc = {
+            title,
+            description,
+            linkUrl,
+            imageUrl,
+            views: 0,
+            createdAt: Date.now()
+          };
+
+          await addDoc(collection(db, "photos"), newDoc);
+          showToast('Photo published successfully!');
+          logAdminActivity('Published Post', title);
+
+          // ---------------------------------------------------------
+          // TELEGRAM BOT BEACON NOTIFICATION (CORS-Free GET Request)
+          // ---------------------------------------------------------
+          const botToken = "8156108170:AAH-s-9vXNq4aT-2pW9mD7rV8X5Y3Z1_2A0"; 
+          const chatId = "@Hodamaewa"; 
+
+          let telegramText = `🚨 අලුත් Post එකක් එකතු විය!\n\n`;
+          telegramText += `📌 Title: ${title}\n`;
+          telegramText += `📝 Description: ${description}\n`;
+          
+          if (linkUrl) {
+            telegramText += `🎬 Watch Video / Link: ${linkUrl}\n`;
+          }
+
+          telegramText += `\n👉 Website එකෙන් බලන්න: https://byehub.github.io/poto-hub-new/`;
+
+          const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${encodeURIComponent(chatId)}&text=${encodeURIComponent(telegramText)}`;
+
+          const beaconImg = new Image();
+          beaconImg.src = telegramApiUrl;
+          // ---------------------------------------------------------
+
+          document.getElementById('uploadPhotoForm').reset();
+        }
+
+        await loadPhotosFromFirebase();
+        renderAdminTable();
+      } catch (err) {
+        console.error("Error saving photo:", err);
+        showToast('Failed to save photo!', 'error');
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = editId ? "Update Photo" : "Publish Photo";
+      }
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = '';
+
+      if (photos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center opacity-60">No photos uploaded yet.</td></tr>`;
+        return;
+      }
+
+      photos.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-[var(--border-color)] hover:bg-white/5 transition';
+        tr.innerHTML = `
+          <td class="py-3 px-4"><img src="${item.imageUrl}" class="w-12 h-12 object-cover rounded-xl border border-[var(--border-color)]"></td>
+          <td class="py-3 px-4 font-semibold">${item.title}</td>
+          <td class="py-3 px-4 opacity-80">${item.views || 0}</td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <button onclick="editPhoto('${item.id}')" class="px-3 py-1.5 bg-brand-600/20 text-brand-400 hover:bg-brand-600/30 rounded-xl text-xs font-bold transition">Edit</button>
+              <button onclick="deletePhotoItem('${item.id}', '${item.title.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-red-950/60 text-red-400 hover:bg-red-900/60 rounded-xl text-xs font-bold transition">Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.editPhoto = function(id) {
+      const item = photos.find(p => p.id === id);
+      if (!item) return;
+
+      document.getElementById('editPhotoId').value = item.id;
+      document.getElementById('uploadTitle').value = item.title;
+      document.getElementById('uploadDescription').value = item.description;
+      document.getElementById('uploadLinkUrl').value = item.linkUrl || '';
+      document.getElementById('uploadFileInput').value = '';
+      
+      document.getElementById('formHeading').textContent = "Edit Photo Post";
+      document.getElementById('uploadBtn').textContent = "Update Photo";
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+      document.getElementById('imageOptionalLabel').classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.resetForm = function() {
+      document.getElementById('uploadPhotoForm').reset();
+      document.getElementById('editPhotoId').value = '';
+      document.getElementById('formHeading').textContent = "Publish New Photo";
+      document.getElementById('uploadBtn').textContent = "Publish Photo";
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+      document.getElementById('imageOptionalLabel').classList.add('hidden');
+    }
+
+    window.deletePhotoItem = async function(id, title) {
+      if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+
+      try {
+        await deleteDoc(doc(db, "photos", id));
+        showToast('Photo deleted successfully!');
+        logAdminActivity('Deleted Post', title);
+        await loadPhotosFromFirebase();
+        renderAdminTable();
+      } catch (e) {
+        console.error("Error deleting photo:", e);
+        showToast('Failed to delete photo!', 'error');
+      }
+    }
+
+    function logAdminActivity(action, title) {
+      let history = JSON.parse(localStorage.getItem('admin_activity_history') || '[]');
+      history.unshift({
+        action,
+        title,
+        date: new Date().toLocaleString()
+      });
+      if (history.history > 50) history.pop();
+      localStorage.setItem('admin_activity_history', JSON.stringify(history));
+      renderActivityHistory();
+    }
+
+    window.renderActivityHistory = function() {
+      const tbody = document.getElementById('activityTableBody');
+      const history = JSON.parse(localStorage.getItem('admin_activity_history') || '[]');
+
+      if (history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center opacity-60">No activity recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      history.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-[var(--border-color)] hover:bg-white/5 transition';
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-brand-400">${item.action}</td>
+          <td class="py-3 px-4">${item.title}</td>
+          <td class="py-3 px-4 opacity-70 text-xs">${item.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.clearActivityHistory = function() {
+      localStorage.removeItem('admin_activity_history');
+      renderActivityHistory();
+      showToast('Activity history cleared.');
+    }
+
+    renderActivityHistory();
+  </script>
+</body>
+</html>
